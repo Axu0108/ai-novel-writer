@@ -1,0 +1,16 @@
+{
+    "name": "AI同人文写作",
+    "short_name": "AI写作",
+    "description": "多AI引擎同人文写作工具",
+    "start_url": "./",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4f46e5",
+    "icons": [
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>",
+            "sizes": "100x100",
+            "type": "image/svg+xml"
+        }
+    ]
+}
