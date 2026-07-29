@@ -6,7 +6,7 @@ const API_KEYS = {
 };
 
 const API_ENDPOINTS = {
-    deepseek: 'https://api.deepseek.com/v1/chat/completions',
+   deepseek: 'https://api.corsfix.com/?url=https://api.deepseek.com/v1/chat/completions',
     doubao: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions',
     qwen: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions'
 };
