@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI同人文写作</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#ffffff">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <button class="nav-btn" id="backBtn" style="visibility:hidden;">←</button>
+        <h1 class="header-title">AI同人文写作</h1>
+        <button class="nav-btn" id="settingsBtn">⚙️</button>
+    </header>
+
+    <!-- 主体内容区 -->
+    <main class="main-content">
+        
+        <!-- ========== 书架页面 ========== -->
+        <section class="page active" id="bookshelfPage">
+            <div class="bookshelf-toolbar">
+                <span class="book-count">共 <span id="bookCount">0</span> 本书</span>
+                <button class="btn btn-primary" id="createBookBtn">+ 创建新书</button>
+            </div>
+            <div class="books-grid" id="booksGrid">
+                <!-- 空状态 -->
+                <div class="empty-state" id="emptyBookshelf">
+                    <div class="empty-icon">📚</div>
+                    <p>还没有同人文</p>
+                    <p class="empty-sub">点击上方按钮创建你的第一本书</p>
+                </div>
+            </div>
+            <div class="footer-actions">
+                <button class="btn btn-outline" id="exportAllBtn">📤 导出全部</button>
+                <button class="btn btn-outline" id="importBtn">📥 导入</button>
+                <input type="file" id="importFileInput" accept=".json" style="display:none;">
+            </div>
+        </section>
+
+        <!-- ========== 写作页面 ========== -->
+        <section class="page" id="writingPage">
+            <div class="writing-header">
+                <h2 class="book-title-display" id="writingBookTitle"></h2>
+                <div class="ai-selector">
+                    <label>AI引擎：</label>
+                    <select id="aiModelSelect">
+                        <option value="deepseek">DeepSeek</option>
+                        <option value="doubao">豆包</option>
+                        <option value="qwen">通义千问</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- 章节列表侧边栏切换 -->
+            <div class="chapter-tabs">
+                <button class="tab-btn active" data-tab="write">✍️ 写作</button>
+                <button class="tab-btn" data-tab="chapters">📑 章节列表</button>
+            </div>
+
+            <!-- 写作区域 -->
+            <div class="tab-content active" id="writeTab">
+                <div class="chapter-info">
+                    <span id="currentChapterLabel">第1章</span>
+                    <div class="chapter-nav">
+                        <button class="icon-btn" id="prevChapterBtn" disabled>◀</button>
+                        <button class="icon-btn" id="nextChapterBtn">▶</button>
+                    </div>
+                </div>
+                <div class="editor-container">
+                    <textarea id="chapterEditor" placeholder="在这里写作，或点击下方「AI生成」按钮..."></textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="btn btn-outline" id="undoBtn" disabled>↩ 撤销</button>
+                    <button class="btn btn-outline" id="redoBtn" disabled>↪ 重做</button>
+                    <button class="btn btn-accent" id="aiGenerateBtn">🤖 AI生成本章</button>
+                </div>
+                <div class="word-count">
+                    <span>字数：<span id="wordCount">0</span></span>
+                    <span>目标：<input type="number" id="wordTarget" value="2000" min="500" max="10000" step="500"> 字/章</span>
+                </div>
+            </div>
+
+            <!-- 章节列表 -->
+            <div class="tab-content" id="chaptersTab">
+                <div class="chapter-list-header">
+                    <span>共 <span id="totalChapters">1</span> 章</span>
+                    <span>计划 <input type="number" id="plannedChapters" value="10" min="1" max="100"> 章完结</span>
+                </div>
+                <ul class="chapter-list" id="chapterList"></ul>
+            </div>
+
+            <!-- AI生成弹窗 -->
+            <div class="modal-overlay" id="aiModal">
+                <div class="modal">
+                    <h3>AI生成章节</h3>
+                    <div class="modal-body">
+                        <label>本章简要提示（可选）：</label>
+                        <textarea id="aiPrompt" placeholder="例如：主角在森林中遇到了一位神秘老人..." rows="3"></textarea>
+                        <div class="ai-status" id="aiStatus"></div>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn btn-outline" id="cancelAiBtn">取消</button>
+                        <button class="btn btn-accent" id="confirmAiBtn">开始生成</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== 设置页面 ========== -->
+        <section class="page" id="settingsPage">
+            <h2>设置</h2>
+            <div class="settings-group">
+                <h3>AI 引擎配置</h3>
+                <div class="setting-item">
+                    <label>DeepSeek API Key</label>
+                    <input type="password" id="deepseekKey" placeholder="sk-xxx">
+                    <button class="btn-small" onclick="toggleVisibility('deepseekKey')">👁️</button>
+                </div>
+                <div class="setting-item">
+                    <label>豆包 API Key</label>
+                    <input type="password" id="doubaoKey" placeholder="输入豆包Key">
+                    <button class="btn-small" onclick="toggleVisibility('doubaoKey')">👁️</button>
+                </div>
+                <div class="setting-item">
+                    <label>通义千问 API Key</label>
+                    <input type="password" id="qwenKey" placeholder="输入千问Key">
+                    <button class="btn-small" onclick="toggleVisibility('qwenKey')">👁️</button>
+                </div>
+            </div>
+            <div class="settings-group">
+                <h3>背景主题</h3>
+                <div class="theme-options">
+                    <button class="theme-btn active" data-theme="white">⚪ 纯白</button>
+                    <button class="theme-btn" data-theme="cream">🟠 暖黄</button>
+                    <button class="theme-btn" data-theme="dark">⚫ 暗黑</button>
+                    <button class="theme-btn" data-theme="green">🟢 护眼绿</button>
+                </div>
+            </div>
+            <div class="settings-group">
+                <h3>数据管理</h3>
+                <button class="btn btn-outline" id="exportDataBtn">📤 导出所有数据</button>
+                <button class="btn btn-outline" id="importDataBtn">📥 导入数据</button>
+                <input type="file" id="importDataInput" accept=".json" style="display:none;">
+                <button class="btn btn-danger" id="clearAllBtn">🗑️ 清除所有数据</button>
+            </div>
+            <p class="version-info">AI同人文写作 v1.0</p>
+        </section>
+    </main>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
